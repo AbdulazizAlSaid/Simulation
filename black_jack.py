@@ -1,7 +1,11 @@
-import os, random, string, math, time
+import os
+import random
+import string
+import math
+import time
 
-Ace=1
-J=Q=K=10
+Ace = 1
+J = Q = K = 10
 deck = []
 hard = True
 standard = False
@@ -9,25 +13,29 @@ sumTotal = 0
 policy = 1
 
 # Intro
-print ("Welcome to Blackjack simulation, where we will test how often we bust based on predetermined policies!\n")
+print("Welcome to Blackjack simulation, where we will test how often we bust based on predetermined policies!\n")
+
 
 def infDeckGame():
-    print ("You have chosen an infinite deck!\n")
+    print("You have chosen an infinite deck!\n")
     global standard
     standard = False
+
+
 def stanDeckGame():
-    print ("You have chosen a standard deck!\n")
+    print("You have chosen a standard deck!\n")
     global standard
     standard = True
+
 
 def startGame():
     decktype = 0
     _ace = 0
     global Ace  # needs to be defined here as global to change value of variable
 
-
-    #Player chooses whether Ace's value is 1 or 11
-    _ace = input("Select value of Ace, Choose [0] for a value of 1 or [1] for a value of 10 \n")
+    # Player chooses whether Ace's value is 1 or 11
+    _ace = input(
+        "Select value of Ace, Choose [0] for a value of 1 or [1] for a value of 10 \n")
     if _ace == "0":
         Ace = 1
         print("A is now ", Ace)
@@ -36,64 +44,70 @@ def startGame():
         print("A is now ", Ace)
     else:
         print("Incorrect input, Ace value will be defaulted to 1")
-    
-    decktype = input( "Choose a deck type [I]nfinite or [S]tandard: \n")
+
+    decktype = input("Choose a deck type [I]nfinite or [S]tandard: \n")
     if decktype == "I" or decktype == "i":
         infDeckGame()
-        #exit()
+        # exit()
     elif decktype == "S" or decktype == "s":
         stanDeckGame()
-        #exit()
+        # exit()
     else:
         print("Incorrect input! Ending simulation!")
         exit()
+
 
 # POLICY
 def _PolicySelected(x):
     # POLICY 1
     if x == 1:
-        if sumTotal>=17: 
+        if sumTotal >= 17:
             print("stick, Policy 1")
-        elif sumTotal<17:
+        elif sumTotal < 17:
             print("hit, Policy 1")
-            while sumTotal < 21:
-                hit()
+            hit()
     # POLICY 2
     elif x == 2:
-        if sumTotal>=17 and hard: 
+        if sumTotal >= 17 and hard:
             print("stick, Policy 2")
-        elif sumTotal<17 and hard:
+        elif sumTotal < 17 and hard:
             print("hit, Policy 2")
-            while sumTotal < 21:
-                hit()
+            hit()
     # POLICY 3
-    elif x == 3: 
+    elif x == 3:
         print("stick, Policy 3")
     # POLICY 4
     elif x == 4:
         print("hit, Policy 4")
-        while sumTotal < 21:
-                hit()
+        hit()
     # POLICY 5
 
 
 # Change settings prompt
-settings = input("Do you want to change settings[Y]? Default: Ace=1, No card replacement \n")
+settings = input(
+    "Do you want to change settings[Y]? Default: Ace=1, No card replacement \n")
 if settings == "Y" or settings == "y":
     startGame()
 
 
 # CHECK IF 21 OR OVER
 def check():
-    if sumTotal==21:
+    if sumTotal == 21:
         print("21! You win")
+        return
     elif sumTotal > 21:
         print("Bust! You went over 21")
+        return
 
 # HIT
+
+
 def hit():
+    if (len(deck)) <= 0:
+        return
+
     global sumTotal
-    pick = random.randint(0,len(deck)-1)
+    pick = random.randint(0, len(deck)-1)
     card = deck[pick]
 
     # HARD IF ACE IS NOT IN HAND, SOFT IF ACE IS IN HAND
@@ -102,50 +116,84 @@ def hit():
         print("Drew an ace: ", Ace)
     else:
         hard = True
-        #print("hard \n")
+        # print("hard \n")
 
     if standard:
         del deck[pick]
     sumTotal += card
     print("After Hit:", sumTotal, " Deck:", len(deck))
     check()
+    _PolicySelected(policy)
 
 # DEAL CARDS
-def deal(user):
-    print(user, "\n")
+
+
+def deal():
+
     global sumTotal
     global deck
+    print(len(deck))
     # Random  index for player
-    pick1 = random.randint(0,len(deck)-1)
-    pick2 = random.randint(0,len(deck)-1)
+    pick1 = random.randint(0, len(deck)-1)
+    pick2 = random.randint(0, len(deck)-1)
 
+    # Checks if the same card index is chosen again. Avoids selecting the same card
+    while pick2 == pick1:
+        pick2 = random.randint(0, len(deck)-1)
 
     # Select card based on index for player
     card1 = deck[pick1]
     card2 = deck[pick2]
 
+    if standard:
+        print(pick1, pick2, card1, card2)
+        deck[pick1] = 0
+        deck[pick2] = 0
+        deck = [i for i in deck if i != 0]
+        print(len(deck))
+    # REMOVE CARD FROM DECK ONE BY ONE, OTHERWISE SAME CARD CAN BE PICKED
+
+    pick3 = random.randint(0, len(deck)-1)
+    pick4 = random.randint(0, len(deck)-1)
+
+    card3 = deck[pick3]
+    card4 = deck[pick4]
+
     # REMOVE CARDS FROM DECK
     if standard:
-        del deck[pick1]
-        del deck[pick2]
+        print(pick3, pick4, card3, card4)
+        deck[pick3] = 0
+        deck[pick4] = 0
+        deck = [i for i in deck if i != 0]
         print(len(deck))
 
     # HARD IF ACE IS NOT IN HAND, SOFT IF ACE IS IN HAND
-    if card1 == Ace or card2== Ace:
+    if card1 == Ace or card2 == Ace or card3 == Ace or card4 == Ace:
         hard = False
         print("Drew an ace: ", Ace)
     else:
         hard = True
-        #print("hard \n")
+        # print("hard \n")
 
+    print("Player 1")
     print("Card 1:", card1)
     print("Card 2:", card2)
     print("your sum is: ", card1+card2)
 
+    print("Player 2")
+    print("Card 3:", card3)
+    print("Card 4:", card4)
+    print("your sum is: ", card3+card4)
+
+    print("P1 chooses \n")
     sumTotal = card1+card2
-    check() #CHECK WIN/BUST BEFORE HITTING
+    check()  # CHECK WIN/BUST BEFORE HITTING
     _PolicySelected(policy)
-    
+
+    print("P2 chooses\n")
+    sumTotal = card3+card4
+    check()  # CHECK WIN/BUST BEFORE HITTING
+    _PolicySelected(policy)
 
 
 rounds = int(input("Enter a number of rounds \n"))
@@ -153,14 +201,14 @@ policy = int(input("Select a policy to play. 1,2,3,4,5"))
 print(policy)
 x = 1
 
-while x<=rounds:
+while x <= rounds:
     # Create deck and shuffle deck after settings
-    deck = [Ace,2,3,4,5,6,7,8,9,10,J,Q,K]*4
+    deck = [Ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K]*4
     random.shuffle(deck)
     print("\n---------------------------------------")
     print("Round: ", x)
-    deal("Player 1")
+    deal()
     print("\n")
-    deal("Player 2")
+
     x += 1
     time.sleep(.2)
