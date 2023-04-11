@@ -101,7 +101,7 @@ def main():
     ani = animation.FuncAnimation(fig, update, fargs=(img, map),
                                   frames = 10,
                                   interval= 100,
-                                  save_count=50)4959
+                                  save_count=50)
 
     if args.movfile:
         ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264'])

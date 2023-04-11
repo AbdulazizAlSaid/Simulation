@@ -4,10 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def montyHall(numDoors, choice, slip):
+    # simulate picking doors by generating random indexes for winning and choice doors
+    # use array to represent doors 1 == winning door 0 is losing -1 ==  closed
     doors = [0]* numDoors
     prizeIdx = random.randint(0, numDoors-1)
     doors[prizeIdx] = 1
     choiceIdx = random.randint(0, numDoors-1)
+    #randomly choose a door to open to simulate slip if winning door is picked player loses 
     if slip:
         while True:
             slipIdx = random.randint(0, numDoors-1)
@@ -16,11 +19,12 @@ def montyHall(numDoors, choice, slip):
                 break
             elif slipIdx == prizeIdx:
                 return False
-    
+    #close all doors not winning 
     for i in range(numDoors):
         if doors[i] == 0 and i != choiceIdx:
             doors[i] = -1
     closed = doors.count(-1)
+    # make sure winning and choice doors are not closed 
     if closed > numDoors-2:
         while(True):
             openIdx = random.randint(0, numDoors-1) 
@@ -41,6 +45,7 @@ def montyHall(numDoors, choice, slip):
     return prizeIdx == choiceIdx
 
 def main():
+    #command line arguements
     parser = argparse.ArgumentParser(description="Monty Hall Simulation")
     parser.add_argument('--num-doors', dest='N', required=False)
     parser.add_argument('--iters', dest='iters', required=False)
@@ -50,6 +55,7 @@ def main():
     parser.add_argument('--title', dest='title', required=False)
     args = parser.parse_args()
     global numDoors
+    #default options
     if args.N: 
         numDoors = int(args.N)
     else: 
@@ -70,8 +76,9 @@ def main():
         title = args.title
     else: 
         title = "Monte Carlo Approximation for Monty Hall"
-   
+    
     if args.plot:
+        #graph probabilty of picking winning door
         iterRanges = [10, 100, 1000, 10000]
         threeDoors = []
         sixDoors = []
