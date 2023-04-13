@@ -79,9 +79,11 @@ def _PolicySelected(x):
         return
     # POLICY 4
     elif x == 4:
-        print("hit, Policy 4")
+        #print("hit, Policy 4")
+        hit()
         hit()
     # POLICY 5
+    
 
 
 # Change settings prompt
@@ -137,17 +139,16 @@ def deal():
 
     global sumTotal
     global deck
-    global index1,index2,index3,index4
+    #global index1,index2,index3,index4
     #print(len(deck))
     # Random  index for player
-    # pick1 = random.randint(0, len(deck)-1)
-    # pick2 = random.randint(0, len(deck)-1)
-    pick1 = index1
-    pick2 = index2
+    pick1 = random.randint(0, len(deck)-1)
+    pick2 = random.randint(0, len(deck)-1)
+
 
     # Checks if the same card index is chosen again. Avoids selecting the same card
-    # while pick2 == pick1:
-    #     pick2 = random.randint(0, len(deck)-1)
+    while pick2 == pick1:
+        pick2 = random.randint(0, len(deck)-1)
 
     # Select card based on index for player
     
@@ -164,14 +165,13 @@ def deal():
         #print(len(deck),x)
     # REMOVE CARD FROM DECK ONE BY ONE, OTHERWISE SAME CARD CAN BE PICKED
 
-    # pick3 = random.randint(0, len(deck)-1)
-    # pick4 = random.randint(0, len(deck)-1)
-    pick3 = index3
-    pick4 = index4
-
+    pick3 = random.randint(0, len(deck)-1)
+    pick4 = random.randint(0, len(deck)-1)
+    while pick4 == pick3:
+        pick4 = random.randint(0, len(deck)-1)
     card3 = deck[pick3]
     card4 = deck[pick4]
-
+    
     # REMOVE CARDS FROM DECK
     if standard:
         #print(pick3, pick4, card3, card4)
@@ -203,30 +203,33 @@ def deal():
     check()  # CHECK WIN/BUST BEFORE HITTING
     _PolicySelected(policy)
 
-    if(policy > 1):
+    if(policy > 0):
         #print("entering dealer")
         global p1Value
         p1Value = sumTotal # sum plus the hit of p1
         sumTotal = card3+card4
+        if card3 == Ace or card4 == Ace:
+            sumTotal += 10
         check()
-        hit()
+        if sumTotal < 21:
+            hit()
         if p1Value < 21 and sumTotal < 21:
-            print(x,p1Value, sumTotal, len(deck))
+            #print(x,p1Value, sumTotal, len(deck))
             if p1Value > sumTotal:
                 global totalWin
                 totalWin+=1
 
 
-# rounds = int(input("Enter a number of rounds \n"))
-# policy = int(input("Select a policy to play. 1,2,3,4,5"))
+rounds = int(input("Enter a number of rounds \n"))
+policy = int(input("Select a policy to play. 1,2,3,4,5"))
 #print(policy)
 
-rounds = 5
-policy = 3
-index1 = 6 #7,6
-index2 = 5 #19
-index3 = 0
-index4 = 1
+#rounds = 5
+#policy = 3
+# index1 = 6 #7,6
+# index2 = 5 #19
+# index3 = 0
+# index4 = 1
 x = 1
 
 plotArray = []
