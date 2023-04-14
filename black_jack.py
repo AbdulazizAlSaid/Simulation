@@ -11,7 +11,7 @@ Ace = 1
 J = Q = K = 10
 deck = []
 hard = True
-standard = True
+standard = False
 sumTotal = 0
 policy = 1
 totalWin = 0
@@ -115,7 +115,7 @@ def hit():
     global sumTotal
     pick = random.randint(0, len(deck)-1)
     card = deck[pick]
-
+    printLog("card drawn: " + str(card))
     # HARD IF ACE IS NOT IN HAND, SOFT IF ACE IS IN HAND
     if card == Ace or card == Ace:
         hard = False
@@ -129,6 +129,7 @@ def hit():
         #print("hit:", len(deck))
     sumTotal += card
     #print("After Hit:", sumTotal, " Deck:", len(deck))
+    printLog("New sum after draw: " + str(sumTotal))
     check()
     #_PolicySelected(policy)
 
@@ -139,6 +140,7 @@ def deal():
 
     global sumTotal
     global deck
+    global totalWin
     #global index1,index2,index3,index4
     #print(len(deck))
     # Random  index for player
@@ -154,7 +156,6 @@ def deal():
     
     card1 = deck[pick1]
     card2 = deck[pick2]
-    plt.xlabel("cards selected:" + str(card1)+ " " + str(card2))
     #print(card1,card2)
     #print(card1, card2, len(deck))
     if standard:
@@ -172,6 +173,7 @@ def deal():
     card3 = deck[pick3]
     card4 = deck[pick4]
     
+    printLog("card1-> "+str(card1)+ " card2-> "+ str(card2)+ " card3-> "+str(card3)+" card4-> "+str(card4))
     # REMOVE CARDS FROM DECK
     if standard:
         #print(pick3, pick4, card3, card4)
@@ -209,19 +211,34 @@ def deal():
         p1Value = sumTotal # sum plus the hit of p1
         sumTotal = card3+card4
         if card3 == Ace or card4 == Ace:
+            printLog("dealer has an ace")
             sumTotal += 10
         check()
         if sumTotal < 21:
+            printLog("dealer hit")
             hit()
         if p1Value < 21 and sumTotal < 21:
             #print(x,p1Value, sumTotal, len(deck))
+            printLog("p1 and dealer both have less than 21")
             if p1Value > sumTotal:
-                global totalWin
+                printLog("p1 beats dealer "+ str(p1Value)+ " > " + str(sumTotal))
                 totalWin+=1
+        if p1Value < 21 and sumTotal > 21:
+            printLog("dealer busted after drawing and player hasn't busted. So p1 wins")
+            totalWin += 1
+    
 
 
-rounds = int(input("Enter a number of rounds \n"))
-policy = int(input("Select a policy to play. 1,2,3,4,5"))
+def printLog(mString):
+    #display cards
+    #print(mString)
+    return
+
+# rounds = int(input("Enter a number of rounds \n"))
+# policy = int(input("Select a policy to play. 1,2,3,4,5"))
+rounds = 1000
+
+policy = 3
 #print(policy)
 
 #rounds = 5
@@ -230,32 +247,84 @@ policy = int(input("Select a policy to play. 1,2,3,4,5"))
 # index2 = 5 #19
 # index3 = 0
 # index4 = 1
-x = 1
+
 
 plotArray = []
+_policy3Ar = []
+_policy4Ar = []
+# _policy3Bar = []
+# _policy4Bar = []
 
 
-for i in range(15):
-    while x <= rounds:
-        # Create deck and shuffle deck after settings
-        deck = [Ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K]*4
-        #random.shuffle(deck)
-        #print("\n---------------------------------------")
-        #print("Round: ", x)
-        deal()
-        #print("\n")
+def simulate():
+    global rounds
+    global deck
+    global totalWin
+    x = 1
+    for i in range(15):
+        while x <= rounds:
+            printLog("Standard Deck? " + str(standard))
+            printLog("round start: " + str(x))
+            printLog("policy played: " +  str(policy))
+            # Create deck and shuffle deck after settings
+            deck = [Ace, 2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K]*4
+            random.shuffle(deck)
+            #print("\n---------------------------------------")
+            #print("Round: ", x)
+            deal()
+            #print("\n")
+            printLog("total wins so far: "+ str(totalWin))
+            x += 1
+            
+            #time.sleep(.2)
+        x=1
+        plotArray.append(totalWin)
+        totalWin = 0
 
-        x += 1
-        #time.sleep(.2)
-    x=1
-    plotArray.append(totalWin)
-    totalWin = 0
+simulate()
+_policy3Ar = plotArray
+policy = 4
+plotArray = []
+simulate()
+_policy4Ar = plotArray
+
+# def runSimulation():
+#     global policy, _policy3Ar, _policy4Ar, plotArray
+#     simulate()
+#     _policy3Ar = plotArray
+#     policy = 4
+#     plotArray = []
+#     simulate()
+#     _policy4Ar = plotArray
+#     if policy == 4: policy=3
+
+# for i in range(1):
+#     runSimulation()
+#     print("next rounds")
+#     rounds *= 10
+#     print("policy bar update:",_policy3Ar)
+#     _policy3Bar.append(_policy3Ar)
+#     _policy4Bar.append(_policy4Ar)
 
 
-print(plotArray, st.mean(plotArray)/rounds)
-#xpoints = np.array([1,2,3,4,5,6,7,8,9,10,11,12])
-plt.ylim(0,rounds)
-ypoints = np.array(plotArray)
+policy3Avg = st.mean(_policy3Ar)/rounds
+policy4Avg = st.mean(_policy4Ar)/rounds
+print(_policy3Ar,policy3Avg, _policy4Ar,policy4Avg)
+#print("policy bar:", _policy3Bar)
+# #xpoints = np.array([1,2,3,4,5,6,7,8,9,10,11,12])
+# plt.ylim(0,rounds)
+# ypoints = np.array(plotArray)
 
-plt.plot(ypoints)
+# plt.plot(ypoints)
+# plt.show()
+
+plt.ylim(0,1)
+barList = plt.bar(["policy 3","policy 4"],[policy3Avg,policy4Avg],)
+barList[0].set_color('r')
+barList[1].set_color('b')
+plt.text(0,1,policy3Avg, ha='center')
+plt.text(1,1,policy4Avg, ha='center')
+plt.ylabel("Average win rate")
+plt.xlabel(str(rounds) + " rounds with 15 iteration")
+
 plt.show()
