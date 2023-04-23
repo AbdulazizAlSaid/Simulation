@@ -1,3 +1,5 @@
+#to run the code, navigate to file in command line and then type
+#python3 game-of-life.py --<still><travelling><oscillating><glidergun>
 import numpy as np 
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
@@ -36,6 +38,50 @@ def travelling(map):
     map[3][2] = 1
     map[2][3] = 1
     map[3][3] = 1
+    return map
+def glider_gun(map):
+    map[6][5] = 1
+    map[6][6] = 1
+    map[7][5] = 1
+    map[7][6] = 1
+    map[6][15] = 1
+    map[4][18] = 1
+    map[4][17] = 1
+    map[5][16] = 1
+    map[6][15] = 1
+    map[7][15] = 1
+    map[8][15] = 1
+    map[9][16] = 1
+    map[10][17] = 1
+    map[10][18] = 1
+
+    map[7][19] = 1
+    map[7][21] = 1
+    map[7][22] = 1
+    map[6][21] = 1
+    map[8][21] = 1
+    map[5][20] = 1
+    map[9][20] = 1
+
+    map[5][25] = 1
+    map[5][26] = 1
+    map[4][25] = 1
+    map[4][26] = 1
+    map[6][25] = 1
+    map[6][26] = 1
+    map[3][27] = 1
+    map[7][27] = 1
+    map[3][29] = 1
+    map[2][29] = 1
+    map[7][29] = 1
+    map[8][29] = 1
+
+    map[4][39] = 1
+    map[4][40] = 1
+    map[5][39] = 1
+    map[5][40] = 1
+    
+
     return map
 def random(N):
     return np.random.randint(2, size = (N, N))
@@ -78,13 +124,15 @@ def main():
     parser.add_argument('--still', action='store_true', required=False)
     parser.add_argument('--travelling', action='store_true', required=False)
     parser.add_argument('--oscillating', action='store_true', required=False)
+    parser.add_argument('--glidergun', action='store_true', required=False)
+
     args = parser.parse_args()
     global map 
     global size 
     if args.N and int(args.N) > 0: 
         size = int(args.N)
     else: 
-        size = 10
+        size = 100
     iters = 10
     map = np.zeros((size, size))
     if args.still: 
@@ -93,6 +141,8 @@ def main():
         map = oscillating(map)
     elif args.travelling: 
         map = travelling(map)
+    elif args.glidergun: 
+        map = glider_gun(map)
     else: 
         map = random(size)
     print(map)
@@ -102,7 +152,6 @@ def main():
                                   frames = 10,
                                   interval= 100,
                                   save_count=50)
-
     if args.movfile:
         ani.save(args.movfile, fps=30, extra_args=['-vcodec', 'libx264'])
     plt.show()
