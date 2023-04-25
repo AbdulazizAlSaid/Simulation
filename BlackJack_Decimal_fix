@@ -247,7 +247,7 @@ def printLog(mString):
 
 # rounds = int(input("Enter a number of rounds \n"))
 # policy = int(input("Select a policy to play. 1,2,3,4,5"))
-rounds = 5
+rounds = 10
 
 policy = 1
 # print(policy)
@@ -272,6 +272,12 @@ _policy2Bar = []
 _policy3Bar = []
 _policy4Bar = []
 _policy5Bar = []
+
+_policy1Sd = []
+_policy2Sd = []
+_policy3Sd = []
+_policy4Sd = []
+_policy5Sd = []
 
 
 def simulate():
@@ -304,22 +310,27 @@ def sim():
     global rounds, plotArray, _policy1Ar, _policy2Ar, _policy3Ar, _policy4Ar, _policy5Ar, policy
     simulate()
     _policy1Ar = plotArray
+    _policy1Sd.append(st.stdev(_policy1Ar)/rounds)
     policy = 2
     plotArray = []
     simulate()
     _policy2Ar = plotArray
+    _policy2Sd.append(st.stdev(_policy2Ar)/rounds)
     policy = 3
     plotArray = []
     simulate()
     _policy3Ar = plotArray
+    _policy3Sd.append(st.stdev(_policy3Ar)/rounds)
     policy = 4
     plotArray = []
     simulate()
     _policy4Ar = plotArray
+    _policy4Sd.append(st.stdev(_policy4Ar)/rounds)
     policy = 5
     plotArray = []
     simulate()
     _policy5Ar = plotArray
+    _policy5Sd.append(st.stdev(_policy5Ar)/rounds)
     plotArray = []
     rounds *= 10
 
@@ -357,6 +368,8 @@ print(policy1Avg, policy2Avg, policy3Avg, policy4Avg, policy5Avg)
 sim()
 populateBar()
 print(policy1Avg, policy2Avg, policy3Avg, policy4Avg, policy5Avg)
+
+print("p1 array:", _policy1Ar, st.stdev(_policy1Ar))
 
 # def runSimulation():
 #     global policy, _policy3Ar, _policy4Ar, plotArray
@@ -398,15 +411,26 @@ br5 = [x + barWidth for x in br4]
 
 plt.bar(br1, _policy1Bar, color='r', width=barWidth,
         edgecolor='grey', label='Policy 1')
+plt.errorbar(br1, _policy1Bar, yerr=_policy1Sd, fmt='None')
 plt.bar(br2, _policy2Bar, color='g', width=barWidth,
         edgecolor='grey', label='Policy 2')
+plt.errorbar(br2, _policy2Bar, yerr=_policy2Sd, fmt='None')
 plt.bar(br3, _policy3Bar, color='b', width=barWidth,
         edgecolor='grey', label='Policy 3')
+plt.errorbar(br3, _policy3Bar, yerr=_policy3Sd, fmt='None')
 plt.bar(br4, _policy4Bar, color='y', width=barWidth,
         edgecolor='grey', label='Policy 4')
+plt.errorbar(br4, _policy4Bar, yerr=_policy4Sd, fmt='None')
 plt.bar(br5, _policy5Bar, color='k', width=barWidth,
         edgecolor='grey', label='Policy 5')
+plt.errorbar(br5, _policy5Bar, yerr=_policy5Sd, fmt='None')
 
+
+print(_policy1Sd)
+print(_policy2Sd)
+print(_policy3Sd)
+print(_policy4Sd)
+print(_policy5Sd)
 
 plt.xlabel('Iterations', fontweight='bold', fontsize=25)
 plt.ylabel('Win Ratio', fontweight='bold', fontsize=25)
