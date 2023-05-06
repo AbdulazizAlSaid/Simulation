@@ -1,3 +1,9 @@
+# to run code in terminal run python3 monty-hall.py 
+# here are the options: <--numDoors> <--iters> 
+# <--choice> 0 for random switch 1 for never switch 2 for always switch
+# <--banana> throws banana peel at host
+# <--plot> shows the distribution of a variety of doors and Iterations
+#running this script default with no options does not plot the probability distribution. Default options: 3 doors, 10000 iterations, no banana
 import argparse
 import random
 import numpy as np 
